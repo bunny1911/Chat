@@ -1,1 +1,3 @@
 local_conf.py
+/venv/
+/alembic.ini
