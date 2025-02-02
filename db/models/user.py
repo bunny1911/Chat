@@ -44,6 +44,6 @@ class User(Base):
     )
     chats = relationship(
         "Chat",
-        secondary="chat_users",
+        secondary="chat_user",
         back_populates="users"
     )

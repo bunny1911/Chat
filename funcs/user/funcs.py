@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 from db.models import User
 
 
-async def get_user_by_id(db_session: AsyncSession, user_id: int) -> dict:
+async def get_user(db_session: AsyncSession, user_id: int) -> dict:
     """
     Returns a single user record from the database by ID.
 
@@ -21,7 +21,13 @@ async def get_user_by_id(db_session: AsyncSession, user_id: int) -> dict:
     :rtype: dict
     """
 
-    user_query = await db_session.execute(select(User).where(User.id == user_id))
+    user_query = await db_session.execute(
+        select(
+            User
+        ).where(
+            User.id == user_id
+        )
+    )
     user = user_query.scalar_one_or_none()
 
     if not user:
@@ -56,11 +62,27 @@ async def get_users(
     """
 
     # Defined 'total' value
-    total_query = await db_session.execute(select(func.count()).select_from(select(User).subquery()))
+    total_query = await db_session.execute(
+        select(
+            func.count()
+        ).select_from(
+            select(
+                User
+            ).subquery()
+        )
+    )
     total = total_query.scalar() or 0
 
     # Defined users
-    users_query = await db_session.execute(select(User).limit(on_page).offset(page * on_page))
+    users_query = await db_session.execute(
+        select(
+            User
+        ).limit(
+            on_page
+        ).offset(
+            page * on_page
+        )
+    )
     users = users_query.scalars().all()
 
     return {

@@ -9,7 +9,6 @@ from sqlalchemy import (
 )
 
 from db.base import Base
-from ..models import User, Chat
 
 
 class ChatUser(Base):
@@ -21,7 +20,7 @@ class ChatUser(Base):
         chat_id (Integer): ID of the chat.
     """
 
-    __tablename__ = "chat_users"
+    __tablename__ = "chat_user"
     __table_args__ = (
         UniqueConstraint(
             "user_id",
@@ -34,11 +33,8 @@ class ChatUser(Base):
     chat_id = Column(Integer, ForeignKey("chat.id", ondelete="CASCADE"), primary_key=True)
 
     user = relationship(
-        "User",
-        back_populates="chats"
+        "User"
     )
     chat = relationship(
-        "Chat",
-        back_populates="users"
-    )
+        "Chat")
 
