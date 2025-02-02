@@ -2,6 +2,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
 from conf import DB
 
 # Defined DB url
@@ -16,3 +17,12 @@ SessionLocal = sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
 )
+
+
+async def get_db():
+    """
+    Generates a new database session for each request.
+    """
+
+    async with SessionLocal() as session:
+        yield session
