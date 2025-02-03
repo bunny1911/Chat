@@ -4,14 +4,15 @@ from fastapi import FastAPI
 from routes.user.funcs import user_router
 
 # Initialize app
-app = FastAPI()
+app = FastAPI(
+    title="Messenger API",
+    description="A real-time messaging application built with FastAPI.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
 
 
-app.include_router(user_router, prefix="/api", tags=["Users"])
-
-
-# Create base route
-@app.get("/")
-def read_root():
-    return {"message": "Messenger API is running"}
+# Users
+app.include_router(user_router)
 
