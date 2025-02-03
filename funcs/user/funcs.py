@@ -1,12 +1,75 @@
 # coding=utf-8
 
 from fastapi import HTTPException
+from passlib.hash import bcrypt
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import func
 
+
 from db.models import User
+
+
+async def create_user(
+        db: AsyncSession,
+        first_name: str,
+        last_name: str,
+        login: str,
+        password: str,
+        phone_number: str,
+) -> User:
+    """
+    Creates a new user in the database.
+    """
+
+    # Get user from DB
+    user: User = await db.scalar(
+        select(
+            User
+        ).where(
+            (
+                    User.login == login
+            ) | (
+                    User.phone_number == phone_number
+            )
+        )
+    )
+
+    if user:
+        # Exist
+        raise HTTPException(
+            status_code=404,
+            detail="User with this login or phone number already exists."
+        )
+
+    # Generate Api-Key
+    api_key = bcrypt.hash(f"{first_name}{last_name}{login}{password}{phone_number}")
+
+    # Hashed password
+    hashed_password = bcrypt.hash(password)
+
+    # Create user
+    new_user = User(
+        User(
+            first_name=first_name,
+            last_name=last_name,
+            login=login,
+            api_key=api_key,
+            hashed_password=hashed_password,
+        )
+
+    )
+    db.add(new_user)
+
+    # Save all changes
+    await db.commit()
+    await db.refresh(new_user)
+
+    return {
+        "success": True,
+        "result": new_user,
+    }
 
 
 async def get_user(db_session: AsyncSession, user_id: int) -> dict:
