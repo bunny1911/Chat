@@ -1,6 +1,8 @@
 # coding=utf-8
 
-from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import relationship, Mapped
 from sqlalchemy.sql import func
 from sqlalchemy import (
     Column,
@@ -11,6 +13,9 @@ from sqlalchemy import (
 )
 
 from db.base import Base
+
+if TYPE_CHECKING:
+    from ..models import Message, User
 
 
 class Chat(Base):
@@ -31,13 +36,12 @@ class Chat(Base):
     is_group = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    messages = relationship(
+    messages: Mapped[list["Message"]] = relationship(
         "Message",
         back_populates="chat"
     )
-    users = relationship(
+    users: Mapped[list["User"]] = relationship(
         "User",
         secondary="chat_user",
         back_populates="chats"
     )
-

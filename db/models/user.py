@@ -1,6 +1,8 @@
 # coding=utf-8
 
-from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import relationship, Mapped
 from sqlalchemy.sql import func
 from sqlalchemy import (
     Column,
@@ -10,6 +12,9 @@ from sqlalchemy import (
 )
 
 from ..base import Base
+
+if TYPE_CHECKING:
+    from ..models import Message, Chat
 
 
 class User(Base):
@@ -38,11 +43,11 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    messages = relationship(
+    messages: Mapped[list["Message"]] = relationship(
         "Message",
         back_populates="sender"
     )
-    chats = relationship(
+    chats: Mapped[list["Chat"]] = relationship(
         "Chat",
         secondary="chat_user",
         back_populates="users"

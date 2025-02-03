@@ -1,6 +1,8 @@
 # coding=utf-8
 
-from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import relationship, Mapped
 from sqlalchemy import (
     Column,
     Integer,
@@ -9,6 +11,9 @@ from sqlalchemy import (
 )
 
 from db.base import Base
+
+if TYPE_CHECKING:
+    from ..models import Chat, User
 
 
 class ChatUser(Base):
@@ -32,9 +37,8 @@ class ChatUser(Base):
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     chat_id = Column(Integer, ForeignKey("chat.id", ondelete="CASCADE"), primary_key=True)
 
-    user = relationship(
+    user: Mapped["User"] = relationship(
         "User"
     )
-    chat = relationship(
+    chat: Mapped["Chat"] = relationship(
         "Chat")
-

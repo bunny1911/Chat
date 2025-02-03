@@ -1,6 +1,8 @@
 # coding=utf-8
 
-from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import relationship, Mapped
 from sqlalchemy.sql import func
 from sqlalchemy import (
     Column,
@@ -11,6 +13,9 @@ from sqlalchemy import (
 )
 
 from db.base import Base
+
+if TYPE_CHECKING:
+    from ..models import Chat, User
 
 
 class Message(Base):
@@ -33,12 +38,11 @@ class Message(Base):
     content = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    sender = relationship(
+    sender: Mapped["User"] = relationship(
         "User",
         back_populates="messages"
     )
-    chat = relationship(
+    chat: Mapped["Chat"] = relationship(
         "Chat",
         back_populates="messages"
     )
-
