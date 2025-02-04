@@ -12,7 +12,7 @@ from db.models import User
 
 
 async def create_user(
-        db: AsyncSession,
+        db_session: AsyncSession,
         first_name: str,
         last_name: str,
         login: str,
@@ -20,11 +20,11 @@ async def create_user(
         phone_number: str,
 ) -> User:
     """
-    Creates a new user in the database.
+    Creates a new user
     """
 
     # Get user from DB
-    user: User = await db.scalar(
+    user: User = await db_session.scalar(
         select(
             User
         ).where(
@@ -51,20 +51,18 @@ async def create_user(
 
     # Create user
     new_user = User(
-        User(
-            first_name=first_name,
-            last_name=last_name,
-            login=login,
-            api_key=api_key,
-            hashed_password=hashed_password,
-        )
-
+        first_name=first_name,
+        last_name=last_name,
+        login=login,
+        phone_number=phone_number,
+        api_key=api_key,
+        hashed_password=hashed_password,
     )
-    db.add(new_user)
+    db_session.add(new_user)
 
     # Save all changes
-    await db.commit()
-    await db.refresh(new_user)
+    await db_session.commit()
+    await db_session.refresh(new_user)
 
     return {
         "success": True,
@@ -108,8 +106,8 @@ async def get_user(db_session: AsyncSession, user_id: int) -> dict:
 
 async def get_users(
         db_session: AsyncSession,
-        page: int = 0,
-        on_page: int = 10
+        page: int | None = 0,
+        on_page: int | None = 10
 ) -> list[dict]:
     """
     Returns paginated user records from the database with total count.

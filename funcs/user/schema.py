@@ -9,10 +9,11 @@ class UserSchema(BaseModel):
     Schema for serializing User model using Pydantic
     """
 
-    id: int = Field(
-        ...,
+    id: int | None = Field(
+        None,
         description="Unique user ID",
-        example=1
+        example=1,
+        readOnly=True,
     )
     first_name: str = Field(
         ...,
@@ -34,10 +35,11 @@ class UserSchema(BaseModel):
         description="User's phone number",
         example="+1234567890"
     )
-    created_at: datetime = Field(
-        ...,
+    created_at: datetime | None = Field(
+        None,
         description="Account creation date (UTC)",
-        example="2025-02-01T12:00:00Z"
+        example="2025-02-01T12:00:00Z",
+        readOnly=True
     )
 
     class Config:

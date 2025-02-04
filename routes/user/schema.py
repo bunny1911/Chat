@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from funcs.user.schema import UserSchema
 from schemas import ResponsePaginationSchema
@@ -22,3 +22,10 @@ class ResponseUsersSchema(ResponsePaginationSchema):
 
     results: list[UserSchema]
 
+
+class RequestUserSchema(UserSchema):
+    password: str = Field(
+        ...,
+        description="User's password",
+        example="aty111111"
+    )

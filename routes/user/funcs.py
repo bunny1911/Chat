@@ -16,15 +16,39 @@ user_router = APIRouter(
 )
 
 
+@user_router.post(
+    "/register",
+    response_model=ResponseUserSchema,
+    summary="Register a new user",
+    description="Register a new user"
+)
+async def register_user(
+    user_data: RequestUserSchema,
+    db_session: AsyncSession = Depends(get_db)
+) -> dict:
+    """
+    Creates a new user.
+    """
+
+    return await funcs.create_user(
+        db_session=db_session,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        login=user_data.login,
+        phone_number=user_data.phone_number,
+        password=user_data.password,
+    )
+
+
 @user_router.get(
     "/",
     response_model=ResponseUsersSchema,
     summary="Get paginated list of users"
 )
 async def get_users(
+    pagination: RequestPaginationSchema,
     db_session: AsyncSession = Depends(get_db),
-    pagination: RequestPaginationSchema = Depends()
-):
+) -> dict:
     """
     Returns paginated user records from the database with total count.
     """

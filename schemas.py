@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 class RequestPaginationSchema(BaseModel):
     page: int = Field(
-        ...,
+        0,
         description="Current page number",
         example=1
     )
     on_page: int = Field(
-        ...,
+        10,
         description="Number of items per page",
         example=10
     )
